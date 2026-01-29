@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import {
@@ -41,7 +41,7 @@ const steps = [
 export default function ReservarPage() {
     return (
         <Suspense fallback={
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center">
+            <div className="min-h-screen bg-linear-to-br from-blue-50 to-cyan-50 flex items-center justify-center">
                 <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
             </div>
         }>
@@ -79,7 +79,7 @@ function ReservarContent() {
     });
 
     // Reservation result
-    const [reservation, setReservation] = useState<any>(null);
+    const [reservation, setReservation] = useState<{ id?: string } | null>(null);
 
     // Calculate nights and total
     const calculateNights = () => {
@@ -124,7 +124,7 @@ function ReservarContent() {
             }
 
             setAvailableRooms(rooms);
-        } catch (err: any) {
+        } catch {
             setError('Erro ao buscar quartos disponíveis');
             setAvailableRooms([]);
         } finally {
@@ -155,8 +155,9 @@ function ReservarContent() {
             setReservation(response.data);
             setSuccess(true);
             setCurrentStep(4);
-        } catch (err: any) {
-            setError(err.response?.data?.error || 'Erro ao criar reserva');
+        } catch (err: unknown) {
+            const error = err as { response?: { data?: { error?: string } } };
+            setError(error.response?.data?.error || 'Erro ao criar reserva');
         } finally {
             setLoading(false);
         }
@@ -260,7 +261,7 @@ function ReservarContent() {
                 {/* Error message */}
                 {error && (
                     <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center gap-2">
-                        <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                        <AlertCircle className="w-5 h-5 shrink-0" />
                         {error}
                     </div>
                 )}
@@ -278,10 +279,11 @@ function ReservarContent() {
 
                             <div className="grid sm:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label htmlFor="checkIn" className="block text-sm font-medium text-gray-700 mb-1">
                                         Check-in
                                     </label>
                                     <input
+                                        id="checkIn"
                                         type="date"
                                         value={checkIn}
                                         onChange={(e) => setCheckIn(e.target.value)}
@@ -290,10 +292,11 @@ function ReservarContent() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label htmlFor="checkOut" className="block text-sm font-medium text-gray-700 mb-1">
                                         Check-out
                                     </label>
                                     <input
+                                        id="checkOut"
                                         type="date"
                                         value={checkOut}
                                         onChange={(e) => setCheckOut(e.target.value)}
@@ -304,9 +307,9 @@ function ReservarContent() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <span className="block text-sm font-medium text-gray-700 mb-1">
                                     Número de hóspedes
-                                </label>
+                                </span>
                                 <div className="flex items-center gap-4">
                                     <button
                                         onClick={() => setGuests(Math.max(1, guests - 1))}
@@ -430,10 +433,11 @@ function ReservarContent() {
 
                             <div className="grid sm:grid-cols-2 gap-4">
                                 <div className="sm:col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label htmlFor="guestName" className="block text-sm font-medium text-gray-700 mb-1">
                                         Nome completo *
                                     </label>
                                     <input
+                                        id="guestName"
                                         type="text"
                                         value={guestData.name}
                                         onChange={(e) => setGuestData({ ...guestData, name: e.target.value })}
@@ -442,10 +446,11 @@ function ReservarContent() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label htmlFor="guestEmail" className="block text-sm font-medium text-gray-700 mb-1">
                                         E-mail *
                                     </label>
                                     <input
+                                        id="guestEmail"
                                         type="email"
                                         value={guestData.email}
                                         onChange={(e) => setGuestData({ ...guestData, email: e.target.value })}
@@ -454,10 +459,11 @@ function ReservarContent() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label htmlFor="guestPhone" className="block text-sm font-medium text-gray-700 mb-1">
                                         Telefone *
                                     </label>
                                     <input
+                                        id="guestPhone"
                                         type="tel"
                                         value={guestData.phone}
                                         onChange={(e) => setGuestData({ ...guestData, phone: e.target.value })}
@@ -466,10 +472,11 @@ function ReservarContent() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label htmlFor="guestDocument" className="block text-sm font-medium text-gray-700 mb-1">
                                         CPF / Documento
                                     </label>
                                     <input
+                                        id="guestDocument"
                                         type="text"
                                         value={guestData.document}
                                         onChange={(e) => setGuestData({ ...guestData, document: e.target.value })}
@@ -478,10 +485,11 @@ function ReservarContent() {
                                     />
                                 </div>
                                 <div className="sm:col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label htmlFor="guestNotes" className="block text-sm font-medium text-gray-700 mb-1">
                                         Observações
                                     </label>
                                     <textarea
+                                        id="guestNotes"
                                         value={guestData.notes}
                                         onChange={(e) => setGuestData({ ...guestData, notes: e.target.value })}
                                         placeholder="Alguma solicitação especial?"
