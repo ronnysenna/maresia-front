@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import {
@@ -39,6 +39,18 @@ const steps = [
 ];
 
 export default function ReservarPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+            </div>
+        }>
+            <ReservarContent />
+        </Suspense>
+    );
+}
+
+function ReservarContent() {
     const searchParams = useSearchParams();
     const tipoParam = searchParams.get('tipo');
 
@@ -223,8 +235,8 @@ export default function ReservarPage() {
                         {steps.map((step, index) => (
                             <div key={step.id} className="flex items-center">
                                 <div className={`flex items-center justify-center w-10 h-10 rounded-full font-semibold text-sm transition-colors ${currentStep >= step.id
-                                        ? 'bg-blue-600 text-white'
-                                        : 'bg-gray-200 text-gray-500'
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-gray-200 text-gray-500'
                                     }`}>
                                     {currentStep > step.id ? (
                                         <Check className="w-5 h-5" />
@@ -359,8 +371,8 @@ export default function ReservarPage() {
                                             key={room.id}
                                             onClick={() => setSelectedRoom(room)}
                                             className={`border-2 rounded-xl p-4 cursor-pointer transition-all ${selectedRoom?.id === room.id
-                                                    ? 'border-blue-600 bg-blue-50'
-                                                    : 'border-gray-200 hover:border-blue-300'
+                                                ? 'border-blue-600 bg-blue-50'
+                                                : 'border-gray-200 hover:border-blue-300'
                                                 }`}
                                         >
                                             <div className="flex items-start justify-between">
@@ -581,8 +593,8 @@ export default function ReservarPage() {
                                 onClick={handlePrevStep}
                                 disabled={currentStep === 1}
                                 className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors ${currentStep === 1
-                                        ? 'text-gray-400 cursor-not-allowed'
-                                        : 'text-gray-700 hover:bg-gray-100'
+                                    ? 'text-gray-400 cursor-not-allowed'
+                                    : 'text-gray-700 hover:bg-gray-100'
                                     }`}
                             >
                                 <ChevronLeft className="w-5 h-5" />
