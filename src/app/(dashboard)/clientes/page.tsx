@@ -220,6 +220,17 @@ export default function ClientesPage() {
         }
     };
 
+    const handleRecalculateStats = async () => {
+        try {
+            const response = await api.post('/guests/recalculate-stats');
+            alert(response.data.message || 'Estatísticas recalculadas com sucesso!');
+            loadData();
+        } catch (error) {
+            console.error('Erro ao recalcular estatísticas:', error);
+            alert('Erro ao recalcular estatísticas');
+        }
+    };
+
     const handleClassificationChange = async (classification: string) => {
         if (!selectedGuest) return;
         try {
@@ -276,10 +287,16 @@ export default function ClientesPage() {
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Clientes</h1>
                     <p className="text-gray-500 dark:text-gray-400">Gerencie os hóspedes da pousada</p>
                 </div>
-                <Button onClick={() => openEditModal()}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Novo Cliente
-                </Button>
+                <div className="flex gap-2">
+                    <Button variant="outline" onClick={handleRecalculateStats}>
+                        <Clock className="w-4 h-4 mr-2" />
+                        Recalcular Stats
+                    </Button>
+                    <Button onClick={() => openEditModal()}>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Novo Cliente
+                    </Button>
+                </div>
             </div>
 
             {/* Stats Cards */}
@@ -410,8 +427,8 @@ export default function ClientesPage() {
                                     {/* Guest Info */}
                                     <div className="flex items-start gap-4">
                                         <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg ${guest.classification === 'VIP' ? 'bg-amber-500' :
-                                                guest.classification === 'REGULAR' ? 'bg-blue-500' :
-                                                    'bg-green-500'
+                                            guest.classification === 'REGULAR' ? 'bg-blue-500' :
+                                                'bg-green-500'
                                             }`}>
                                             {guest.name.charAt(0).toUpperCase()}
                                         </div>
@@ -557,8 +574,8 @@ export default function ClientesPage() {
                         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-slate-700">
                             <div className="flex items-center gap-3">
                                 <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${selectedGuest.classification === 'VIP' ? 'bg-amber-500' :
-                                        selectedGuest.classification === 'REGULAR' ? 'bg-blue-500' :
-                                            'bg-green-500'
+                                    selectedGuest.classification === 'REGULAR' ? 'bg-blue-500' :
+                                        'bg-green-500'
                                     }`}>
                                     {selectedGuest.name.charAt(0).toUpperCase()}
                                 </div>
