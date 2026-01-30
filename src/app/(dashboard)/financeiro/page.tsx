@@ -93,8 +93,8 @@ export default function FinanceiroPage() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Financeiro</h1>
-                    <p className="text-gray-500">Controle de entradas e saídas</p>
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Financeiro</h1>
+                    <p className="text-gray-500 dark:text-gray-400">Controle de entradas e saídas</p>
                 </div>
                 <Button onClick={() => setIsModalOpen(true)}>
                     <Plus className="w-4 h-4 mr-2" />
@@ -106,36 +106,36 @@ export default function FinanceiroPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card>
                     <CardContent className="flex items-center gap-4">
-                        <div className="p-3 bg-green-100 rounded-lg">
-                            <TrendingUp className="w-6 h-6 text-green-600" />
+                        <div className="p-3 bg-green-100 dark:bg-green-900/40 rounded-lg">
+                            <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400" />
                         </div>
                         <div>
-                            <p className="text-sm text-gray-500">Entradas (Mês)</p>
-                            <p className="text-2xl font-bold text-green-600">{formatCurrency(summary.totalEntradas)}</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Entradas (Mês)</p>
+                            <p className="text-2xl font-bold text-green-600 dark:text-green-400">{formatCurrency(summary.totalEntradas)}</p>
                         </div>
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardContent className="flex items-center gap-4">
-                        <div className="p-3 bg-red-100 rounded-lg">
-                            <TrendingDown className="w-6 h-6 text-red-600" />
+                        <div className="p-3 bg-red-100 dark:bg-red-900/40 rounded-lg">
+                            <TrendingDown className="w-6 h-6 text-red-600 dark:text-red-400" />
                         </div>
                         <div>
-                            <p className="text-sm text-gray-500">Saídas (Mês)</p>
-                            <p className="text-2xl font-bold text-red-600">{formatCurrency(summary.totalSaidas)}</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Saídas (Mês)</p>
+                            <p className="text-2xl font-bold text-red-600 dark:text-red-400">{formatCurrency(summary.totalSaidas)}</p>
                         </div>
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardContent className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-100 rounded-lg">
-                            <DollarSign className="w-6 h-6 text-blue-600" />
+                        <div className="p-3 bg-blue-100 dark:bg-blue-900/40 rounded-lg">
+                            <DollarSign className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                         </div>
                         <div>
-                            <p className="text-sm text-gray-500">Saldo (Mês)</p>
-                            <p className={`text-2xl font-bold ${summary.saldo >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Saldo (Mês)</p>
+                            <p className={`text-2xl font-bold ${summary.saldo >= 0 ? 'text-blue-600 dark:text-blue-400' : 'text-red-600 dark:text-red-400'}`}>
                                 {formatCurrency(summary.saldo)}
                             </p>
                         </div>
@@ -150,8 +150,8 @@ export default function FinanceiroPage() {
                         key={type}
                         onClick={() => setFilter(type)}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filter === type
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600'
                             }`}
                     >
                         {type === '' ? 'Todas' : type === 'ENTRADA' ? 'Entradas' : 'Saídas'}
@@ -167,30 +167,30 @@ export default function FinanceiroPage() {
                 <CardContent className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
-                            <tr className="border-b border-gray-200">
-                                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Data</th>
-                                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Descrição</th>
-                                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Categoria</th>
-                                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Tipo</th>
-                                <th className="text-right py-3 px-4 text-sm font-medium text-gray-500">Valor</th>
+                            <tr className="border-b border-gray-200 dark:border-slate-700">
+                                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">Data</th>
+                                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">Descrição</th>
+                                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">Categoria</th>
+                                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">Tipo</th>
+                                <th className="text-right py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">Valor</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filteredTransactions.map((transaction) => (
-                                <tr key={transaction.id} className="border-b border-gray-100 hover:bg-gray-50">
-                                    <td className="py-3 px-4 text-sm">{formatDate(transaction.date)}</td>
+                                <tr key={transaction.id} className="border-b border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700/50">
+                                    <td className="py-3 px-4 text-sm text-gray-700 dark:text-gray-300">{formatDate(transaction.date)}</td>
                                     <td className="py-3 px-4">
-                                        <p className="font-medium text-gray-900">{transaction.description}</p>
+                                        <p className="font-medium text-gray-900 dark:text-white">{transaction.description}</p>
                                     </td>
                                     <td className="py-3 px-4">
-                                        <span className="text-sm text-gray-600">{getCategoryLabel(transaction.category)}</span>
+                                        <span className="text-sm text-gray-600 dark:text-gray-300">{getCategoryLabel(transaction.category)}</span>
                                     </td>
                                     <td className="py-3 px-4">
                                         <Badge variant={transaction.type === 'ENTRADA' ? 'success' : 'danger'}>
                                             {transaction.type === 'ENTRADA' ? 'Entrada' : 'Saída'}
                                         </Badge>
                                     </td>
-                                    <td className={`py-3 px-4 text-right font-medium ${transaction.type === 'ENTRADA' ? 'text-green-600' : 'text-red-600'
+                                    <td className={`py-3 px-4 text-right font-medium ${transaction.type === 'ENTRADA' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                                         }`}>
                                         {transaction.type === 'ENTRADA' ? '+' : '-'} {formatCurrency(transaction.amount)}
                                     </td>
@@ -198,7 +198,7 @@ export default function FinanceiroPage() {
                             ))}
                             {filteredTransactions.length === 0 && (
                                 <tr>
-                                    <td colSpan={5} className="py-8 text-center text-gray-500">
+                                    <td colSpan={5} className="py-8 text-center text-gray-500 dark:text-gray-400">
                                         Nenhuma transação encontrada
                                     </td>
                                 </tr>
@@ -211,21 +211,21 @@ export default function FinanceiroPage() {
             {/* Modal Nova Transação */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
-                        <div className="flex items-center justify-between p-4 border-b">
-                            <h2 className="text-lg font-semibold">Nova Transação</h2>
-                            <button onClick={() => setIsModalOpen(false)}>
-                                <X className="w-5 h-5 text-gray-500" />
+                    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl w-full max-w-md">
+                        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-slate-700">
+                            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Nova Transação</h2>
+                            <button type="button" onClick={() => setIsModalOpen(false)}>
+                                <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                             </button>
                         </div>
 
                         <form onSubmit={handleSubmit} className="p-4 space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tipo</label>
                                 <select
                                     value={formData.type}
                                     onChange={(e) => setFormData({ ...formData, type: e.target.value as 'ENTRADA' | 'SAIDA' })}
-                                    className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                                    className="w-full rounded-lg border border-gray-300 dark:border-slate-600 px-3 py-2 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
                                 >
                                     <option value="ENTRADA">Entrada</option>
                                     <option value="SAIDA">Saída</option>
@@ -233,11 +233,11 @@ export default function FinanceiroPage() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Categoria</label>
                                 <select
                                     value={formData.category}
                                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                    className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                                    className="w-full rounded-lg border border-gray-300 dark:border-slate-600 px-3 py-2 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
                                 >
                                     <option value="DIARIA">Diária</option>
                                     <option value="EXTRA">Extra</option>

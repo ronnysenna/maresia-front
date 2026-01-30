@@ -2,7 +2,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'ADMIN' | 'GERENTE' | 'RECEPCAO' | 'LIMPEZA';
+  role: "ADMIN" | "GERENTE" | "RECEPCAO" | "LIMPEZA";
   active: boolean;
   createdAt: string;
 }
@@ -15,7 +15,7 @@ export interface Room {
   description?: string;
   capacity: number;
   dailyRate: number;
-  status: 'LIVRE' | 'RESERVADO' | 'OCUPADO' | 'LIMPEZA' | 'MANUTENCAO';
+  status: "LIVRE" | "RESERVADO" | "OCUPADO" | "LIMPEZA" | "MANUTENCAO";
   images: string[];
   amenities: string[];
   active: boolean;
@@ -29,6 +29,22 @@ export interface Guest {
   phone: string;
   document: string;
   documentType: string;
+  birthDate?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  notes?: string;
+  tags?: string[];
+  classification: "NOVO" | "REGULAR" | "VIP";
+  preferredRoom?: string;
+  howDidYouHear?: string;
+  totalSpent: number;
+  totalStays: number;
+  lastVisit?: string;
+  createdAt: string;
+  updatedAt: string;
+  reservations?: Reservation[];
 }
 
 export interface Reservation {
@@ -38,7 +54,7 @@ export interface Reservation {
   guestsCount: number;
   totalValue: number;
   notes?: string;
-  status: 'PENDENTE' | 'CONFIRMADA' | 'CANCELADA' | 'NO_SHOW' | 'FINALIZADA';
+  status: "PENDENTE" | "CONFIRMADA" | "CANCELADA" | "NO_SHOW" | "FINALIZADA";
   room: Room;
   guest: Guest;
   createdAt: string;
@@ -63,7 +79,7 @@ export interface CheckOut {
 
 export interface Cleaning {
   id: string;
-  status: 'PENDENTE' | 'EM_ANDAMENTO' | 'FINALIZADA';
+  status: "PENDENTE" | "EM_ANDAMENTO" | "FINALIZADA";
   notes?: string;
   startedAt?: string;
   finishedAt?: string;
@@ -76,7 +92,7 @@ export interface Maintenance {
   id: string;
   title: string;
   description?: string;
-  status: 'PENDENTE' | 'EM_ANDAMENTO' | 'FINALIZADA';
+  status: "PENDENTE" | "EM_ANDAMENTO" | "FINALIZADA";
   priority: string;
   cost?: number;
   startedAt?: string;
@@ -88,8 +104,8 @@ export interface Maintenance {
 
 export interface Transaction {
   id: string;
-  type: 'ENTRADA' | 'SAIDA';
-  category: 'DIARIA' | 'EXTRA' | 'MANUTENCAO' | 'LIMPEZA' | 'COMPRA' | 'OUTRO';
+  type: "ENTRADA" | "SAIDA";
+  category: "DIARIA" | "EXTRA" | "MANUTENCAO" | "LIMPEZA" | "COMPRA" | "OUTRO";
   description: string;
   amount: number;
   date: string;
