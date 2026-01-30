@@ -288,7 +288,7 @@ export default function ClientesPage() {
                     <p className="text-gray-500 dark:text-gray-400">Gerencie os hóspedes da pousada</p>
                 </div>
                 <div className="flex gap-2">
-                    <Button variant="outline" onClick={handleRecalculateStats}>
+                    <Button variant="secondary" onClick={handleRecalculateStats}>
                         <Clock className="w-4 h-4 mr-2" />
                         Recalcular Stats
                     </Button>
