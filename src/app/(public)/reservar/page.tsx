@@ -79,6 +79,9 @@ function ReservarContent() {
         notes: '',
     });
 
+    // Search loading state
+    const [searchingGuest, setSearchingGuest] = useState(false);
+
     // Reservation result
     const [reservation, setReservation] = useState<{ id?: string } | null>(null);
 
@@ -96,6 +99,32 @@ function ReservarContent() {
 
     // Set minimum date to today
     const today = new Date().toISOString().split('T')[0];
+
+    // Buscar cliente pelo CPF
+    const searchGuestByDocument = async (document: string) => {
+        if (!document || document.length < 5) return;
+
+        setSearchingGuest(true);
+        try {
+            const response = await api.get(`/guests`);
+            const guests = response.data || [];
+            const foundGuest = guests.find((g: { document: string }) => g.document === document);
+
+            if (foundGuest) {
+                setGuestData({
+                    name: foundGuest.name || '',
+                    email: foundGuest.email || '',
+                    phone: foundGuest.phone || '',
+                    document: foundGuest.document || document,
+                    notes: '',
+                });
+            }
+        } catch (err) {
+            console.error('Erro ao buscar cliente:', err);
+        } finally {
+            setSearchingGuest(false);
+        }
+    };
 
     // Fetch available rooms when dates change
     const fetchAvailableRooms = async () => {
@@ -164,7 +193,7 @@ function ReservarContent() {
         setError('');
 
         try {
-            const response = await api.post('/reservations/public', {
+            const payload = {
                 roomId: selectedRoom.id,
                 guestName: guestData.name,
                 guestEmail: guestData.email,
@@ -174,14 +203,26 @@ function ReservarContent() {
                 checkOut: new Date(checkOut).toISOString(),
                 guests,
                 notes: guestData.notes || undefined,
-            });
+            };
 
+            console.log('Criando reserva com payload:', payload);
+
+            const response = await api.post('/reservations/public', payload);
+
+            console.log('Reserva criada com sucesso:', response.data);
             setReservation(response.data);
             setSuccess(true);
             setCurrentStep(4);
         } catch (err: unknown) {
-            const error = err as { response?: { data?: { error?: string } } };
-            setError(error.response?.data?.error || 'Erro ao criar reserva');
+            console.error('Erro ao criar reserva:', err);
+
+            if (err instanceof Error) {
+                setError(err.message || 'Erro ao criar reserva');
+            } else {
+                const error = err as { response?: { data?: { error?: string; message?: string } } };
+                const errorMsg = error.response?.data?.error || error.response?.data?.message || 'Erro ao criar reserva';
+                setError(errorMsg);
+            }
         } finally {
             setLoading(false);
         }
@@ -208,7 +249,7 @@ function ReservarContent() {
             }
             setCurrentStep(3);
         } else if (currentStep === 3) {
-            if (!guestData.name || !guestData.email || !guestData.phone) {
+            if (!guestData.name || !guestData.email || !guestData.phone || !guestData.document) {
                 setError('Preencha todos os campos obrigatórios');
                 return;
             }
@@ -453,12 +494,34 @@ function ReservarContent() {
                     {currentStep === 3 && (
                         <div className="space-y-6">
                             <div className="text-center mb-6">
-                                <Users className="w-12 h-12 text-blue-600 mx-auto mb-2" />
-                                <h2 className="text-xl font-semibold text-gray-900">Seus dados</h2>
-                                <p className="text-gray-600">Preencha seus dados para finalizar a reserva</p>
+                                <Users className="w-12 h-12 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
+                                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Seus dados</h2>
+                                <p className="text-gray-600 dark:text-gray-400">Preencha seus dados para finalizar a reserva</p>
                             </div>
 
                             <div className="grid sm:grid-cols-2 gap-4">
+                                {/* CPF - Campo Principal em Primeiro */}
+                                <div className="sm:col-span-2">
+                                    <label htmlFor="guestDocument" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        CPF / Documento *
+                                    </label>
+                                    <input
+                                        id="guestDocument"
+                                        type="text"
+                                        value={guestData.document}
+                                        onChange={(e) => {
+                                            setGuestData({ ...guestData, document: e.target.value });
+                                            searchGuestByDocument(e.target.value);
+                                        }}
+                                        placeholder="000.000.000-00"
+                                        className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    />
+                                    {searchingGuest && (
+                                        <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">Buscando dados...</p>
+                                    )}
+                                </div>
+
+                                {/* Nome Completo */}
                                 <div className="sm:col-span-2">
                                     <label htmlFor="guestName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                         Nome completo *
@@ -472,6 +535,8 @@ function ReservarContent() {
                                         className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     />
                                 </div>
+
+                                {/* Email e Whatsapp lado a lado */}
                                 <div>
                                     <label htmlFor="guestEmail" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                         E-mail *
@@ -487,7 +552,7 @@ function ReservarContent() {
                                 </div>
                                 <div>
                                     <label htmlFor="guestPhone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                        Telefone *
+                                        Whatsapp *
                                     </label>
                                     <input
                                         id="guestPhone"
@@ -498,19 +563,8 @@ function ReservarContent() {
                                         className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     />
                                 </div>
-                                <div>
-                                    <label htmlFor="guestDocument" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                        CPF / Documento
-                                    </label>
-                                    <input
-                                        id="guestDocument"
-                                        type="text"
-                                        value={guestData.document}
-                                        onChange={(e) => setGuestData({ ...guestData, document: e.target.value })}
-                                        placeholder="000.000.000-00"
-                                        className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                    />
-                                </div>
+
+                                {/* Observações */}
                                 <div className="sm:col-span-2">
                                     <label htmlFor="guestNotes" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                         Observações
@@ -569,9 +623,12 @@ function ReservarContent() {
                             <div className="w-20 h-20 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
                                 <Check className="w-10 h-10 text-green-600" />
                             </div>
-                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Reserva Confirmada!</h2>
-                            <p className="text-gray-600 dark:text-gray-400 mb-6">
-                                Sua reserva foi realizada com sucesso. Enviamos os detalhes para seu e-mail.
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Sua solicitação de reserva foi enviada! 😊</h2>
+                            <p className="text-gray-600 dark:text-gray-400 mb-4">
+                                Nossa equipe irá analisar a disponibilidade e, assim que confirmado, você receberá todos os detalhes diretamente pelo WhatsApp 📲
+                            </p>
+                            <p className="text-gray-600 dark:text-gray-400 font-semibold mb-6">
+                                Agradecemos seu interesse na Pousada Maresia 🌴
                             </p>
 
                             {reservation && (

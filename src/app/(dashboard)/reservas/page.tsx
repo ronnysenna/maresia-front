@@ -384,7 +384,7 @@ export default function ReservasPage() {
                   required
                 />
                 <Input
-                  label="Telefone"
+                  label="Whatsapp"
                   value={formData.guest.phone}
                   onChange={(e) => setFormData({ ...formData, guest: { ...formData.guest, phone: e.target.value } })}
                   required
