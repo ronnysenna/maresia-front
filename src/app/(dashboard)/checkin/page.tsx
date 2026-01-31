@@ -21,7 +21,7 @@ export default function CheckInPage() {
   const loadData = async () => {
     try {
       const [pendingRes, recentRes] = await Promise.all([
-        api.get('/checkin/today'),
+        api.get('/checkin/pending-checkins/list'),
         api.get('/checkin'),
       ]);
       setPendingCheckIns(pendingRes.data);
@@ -53,6 +53,12 @@ export default function CheckInPage() {
   }).length;
   const totalRealizados = recentCheckIns.length;
 
+  const isCheckInToday = (date: string | Date) => {
+    const checkInDate = new Date(date);
+    const today = new Date();
+    return checkInDate.toDateString() === today.toDateString();
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -78,7 +84,7 @@ export default function CheckInPage() {
                 <Clock className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
               </div>
               <div>
-                <p className="text-sm text-yellow-600 dark:text-yellow-400">Pendentes Hoje</p>
+                <p className="text-sm text-yellow-600 dark:text-yellow-400">Pendentes para Check-in</p>
                 <p className="text-2xl font-bold text-yellow-700 dark:text-yellow-300">{pendentesHoje}</p>
               </div>
             </div>
@@ -118,14 +124,14 @@ export default function CheckInPage() {
       <div>
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
           <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-          Check-ins de Hoje ({pendingCheckIns.length})
+          Próximos Check-ins ({pendingCheckIns.length})
         </h2>
 
         {pendingCheckIns.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center">
               <Calendar className="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
-              <p className="text-gray-500 dark:text-gray-400">Nenhum check-in pendente para hoje</p>
+              <p className="text-gray-500 dark:text-gray-400">Nenhum check-in pendente</p>
             </CardContent>
           </Card>
         ) : (
@@ -141,7 +147,9 @@ export default function CheckInPage() {
                         <span className="font-semibold text-gray-900 dark:text-white truncate">
                           {reservation.guest?.name}
                         </span>
-                        <Badge variant="warning">Aguardando</Badge>
+                        <Badge variant={isCheckInToday(reservation.checkInDate) ? "warning" : "default"}>
+                          {isCheckInToday(reservation.checkInDate) ? "Hoje" : "Em breve"}
+                        </Badge>
                       </div>
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500 dark:text-gray-400">
                         <span className="flex items-center gap-1">
